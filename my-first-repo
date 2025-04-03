@@ -58,25 +58,38 @@ int32_t findBalancingIndex(double* array, int32_t size) {
 }
 
 int32_t findNegative(double* array, int32_t size) {
-    int32_t firstNegativeIndex{0};
     int32_t index = -1;
     for (int32_t i = 0; i < size; ++i) {
         if (array[i] < 0) {
-            firstNegativeIndex = array[i];
             index = i;
+            break;
         }
     }
     
     return index;
 }
 
-int32_t findSumAfterNegative(double* array, int32_t size, int32_t negativeIndex) {
+double findSumAfterNegative(double* array, int32_t size, int32_t negativeIndex) {
     double sum{0};
-    for (negativeIndex; negativeIndex + 1 < size; ++negativeIndex) { 
-        sum += array[negativeIndex];   
+    for (int32_t i = negativeIndex + 1; i < size; ++i) { 
+        sum += array[i];   
     }
 
     return sum;
+}
+
+void compressArray(double* array, int32_t size, int32_t p) {
+    int32_t index = 0;
+
+    for (int32_t i = 0; i < size; ++i) {
+        if (array[i] != p) {
+            array[index++] = array[i];
+        }
+    }
+
+    for (int32_t i = index; i < size; ++i) {
+        array[i] = 0;
+    }
 }
 
 
@@ -96,13 +109,13 @@ int main(){
         std::cout << "Max abs element: " << maxAbsElement << ", its index: " << maxAbsIndex << std::endl;
 
         int32_t balancingIndex = findBalancingIndex(array, size);
-        std::cout << "Element where is diff is the least: " << balancingIndex << std::endl;
-
-        if (int32_t negativeIndex = findNegative(array, size) == -1) {
+        std::cout << "Index of an element where is diff is the least: " << balancingIndex << std::endl;
+        int32_t negativeIndex = findNegative(array, size);
+        if (negativeIndex == -1) {
             std::cout << "There are no negatives in array" << std::endl;
         }
         else {
-            int32_t sumAfterNegative = findSumAfterNegative(array, size, negativeIndex);
+            double sumAfterNegative = findSumAfterNegative(array, size, negativeIndex);
             std::cout << "Sum of elements after 1st negative: " << sumAfterNegative << std::endl;
         } 
     }
@@ -110,4 +123,5 @@ int main(){
         std::cout << e.what();
     }
 
+    return 0;
 }
