@@ -1,0 +1,58 @@
+#include <iostream>
+
+void InputSize(int32_t& size){
+    
+    std::cout << "Input size: " << std::endl;
+    std::cin >> size;
+    
+    if (size <= 0){
+        throw std::invalid_argument("Wrong size");
+    }
+}
+
+void createArray(double*& array, int32_t size){
+    array = new double[size];
+}
+
+void fillArray(double* array, int32_t size){
+    std::cout << "Input elements:" << std::endl;
+    for (int32_t i{0}; i < size; ++i){
+        std::cin >> array[i];
+    }
+}
+
+int32_t findMaxAbsIndex(const double* array, int32_t size, double& maxAbsElement) {
+    maxAbsElement = array[0];
+    int index = 0;
+
+    for (int i = 1; i < size; i++) {
+        if (abs(array[i]) > abs(maxAbsElement)) {
+            maxAbsElement = array[i];
+            index = i;
+        }
+    }
+    return index;
+}
+
+
+int main(){
+
+    int32_t size{};
+    
+    try {
+
+        InputSize(size);
+        double* array = nullptr;
+        createArray(array, size);
+        fillArray(array, size);
+
+        double maxAbsElement;
+        int32_t maxAbsIndex = findMaxAbsIndex(array, size, maxAbsElement);
+        std::cout << "Максимальный по модулю элемент: " << maxAbsElement << ", его индекс: " << maxAbsIndex << std::endl;
+
+    }
+    catch (std::invalid_argument &e){
+        std::cout << e.what();
+    }
+
+}
