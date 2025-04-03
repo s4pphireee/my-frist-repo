@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 
 void InputSize(int32_t& size){
     
@@ -78,38 +79,107 @@ double findSumAfterNegative(double* array, int32_t size, int32_t negativeIndex) 
     return sum;
 }
 
-void compressArray(double* array, int32_t size, int32_t p) {
-    int32_t index = 0;
+void arrayOutput(double* array, int32_t size) {
+    std::cout << "Compressed array: ";
+    for (int32_t i = 0; i < size; ++i){
+        std::cout << array[i];
+    }
+    std::cout << std::endl;
+}
+void inputNumber(double& number){
+    std::cout << "Enter a number to delete from array: \n";
+    std::cin >> number;
+}
 
+
+void compressArray(double* array, int32_t size, double*& copy_array) {
+    copy_array = new double[size];
+    std::copy(array, copy_array + size, copy_array);
+    double number{};
+    inputNumber(number);
+    int32_t index = 0;
+    
     for (int32_t i = 0; i < size; ++i) {
-        if (array[i] != p) {
-            array[index++] = array[i];
+        if (copy_array[i] != number) {
+            copy_array[index++] = copy_array[i];
         }
     }
-
+    
     for (int32_t i = index; i < size; ++i) {
-        array[i] = 0;
+        copy_array[i] = 0;
+    }
+    arrayOutput(copy_array, size);
+    delete [] copy_array;
+}
+void checkBorders(double& left_border, double& right_border){
+    if (left_border > right_border){
+        std::swap(left_border,right_border);
     }
 }
 
+void inputInterval(double& left_border, double& right_border){
+    std::cout << "Enter a left border index: \n";
+    std::cin >> left_border;
+    std::cout << "Enter a right border index: \n";
+    std::cin >> right_border;
+    checkBorders(left_border, right_border);
+}
+
+void compressArrayViaInterval(double*& array, int32_t size, double*& copy_array) {
+    copy_array = new double[size];
+    std::copy(array, copy_array + size, copy_array);
+    double left_border{};
+    double right_border{};
+    inputInterval(left_border, right_border);
+    int32_t index = 0;
+    
+    for (int32_t i = 0; i < size; ++i) {
+        if (copy_array[i] <= left_border || copy_array[i] >= right_border) {
+            copy_array[index++] = copy_array[i];
+        }
+    }
+    
+    for (int32_t i = index; i < size; ++i) {
+        copy_array[i] = 0;
+    }
+    arrayOutput(copy_array, size);
+    delete [] copy_array;
+}
+
+
+int32_t findMinAbsMaxIndex(double* array, int32_t size) {
+    int32_t minIndex = 0;
+    double minAbsValue = std::abs(array[0]);
+
+    for (int32_t i = 1; i < size; ++i) {
+        double currentAbsValue = std::abs(array[i]);
+        if (currentAbsValue < minAbsValue) {
+            minAbsValue = currentAbsValue;
+            minIndex = i;
+        } else if (currentAbsValue == minAbsValue) {
+            minIndex = i; 
+        }
+    }
+
+    return minIndex;
+}
 
 int main(){
 
     int32_t size{};
     
     try {
-
+        
         InputSize(size);
         double* array = nullptr;
         createArray(array, size);
         fillArray(array, size);
-
         double maxAbsElement;
         int32_t maxAbsIndex = findMaxAbsIndex(array, size, maxAbsElement);
         std::cout << "Max abs element: " << maxAbsElement << ", its index: " << maxAbsIndex << std::endl;
-
+        
         int32_t balancingIndex = findBalancingIndex(array, size);
-        std::cout << "Index of an element where is diff is the least: " << balancingIndex << std::endl;
+        std::cout << "Index of an element where is diff is the less: " << balancingIndex << std::endl;
         int32_t negativeIndex = findNegative(array, size);
         if (negativeIndex == -1) {
             std::cout << "There are no negatives in array" << std::endl;
@@ -117,11 +187,15 @@ int main(){
         else {
             double sumAfterNegative = findSumAfterNegative(array, size, negativeIndex);
             std::cout << "Sum of elements after 1st negative: " << sumAfterNegative << std::endl;
-        } 
+        }
+        double* copy_array = nullptr;
+        compressArray(array, size, copy_array);
+        compressArrayViaInterval(array, size, copy_array);
+        std::cout << "Minimal element with max index: " << findMinAbsMaxIndex(array, size) << std::endl;
     }
     catch (std::invalid_argument &e){
         std::cout << e.what();
     }
-
+    
     return 0;
 }
