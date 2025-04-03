@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 
 void InputSize(int32_t& size){
     
@@ -21,17 +22,61 @@ void fillArray(double* array, int32_t size){
     }
 }
 
-int32_t findMaxAbsIndex(const double* array, int32_t size, double& maxAbsElement) {
+int32_t findMaxAbsIndex(double* array, int32_t size, double& maxAbsElement) {
     maxAbsElement = array[0];
-    int index = 0;
+    int32_t index = 0;
 
-    for (int i = 1; i < size; i++) {
+    for (int32_t i = 1; i < size; i++) {
         if (abs(array[i]) > abs(maxAbsElement)) {
             maxAbsElement = array[i];
             index = i;
         }
     }
     return index;
+}
+
+int32_t findBalancingIndex(double* array, int32_t size) {
+    double totalSum = 0;
+    for (int32_t i = 0; i < size; i++) {
+        totalSum += array[i];   
+    }
+    
+    double leftSum = 0;
+    double minDiff = totalSum;
+    int32_t index = -1;
+
+    for (int32_t i = 0; i < size; i++) {
+        double rightSum = totalSum - leftSum - array[i];
+        double diff = abs(leftSum - rightSum);
+        if (diff < minDiff) {
+            minDiff = diff;
+            index = i;
+        }
+        leftSum += array[i];
+    }
+    return index;
+}
+
+int32_t findNegative(double* array, int32_t size) {
+    int32_t firstNegativeIndex{0};
+    int32_t index = -1;
+    for (int32_t i = 0; i < size; ++i) {
+        if (array[i] < 0) {
+            firstNegativeIndex = array[i];
+            index = i;
+        }
+    }
+    
+    return index;
+}
+
+int32_t findSumAfterNegative(double* array, int32_t size, int32_t negativeIndex) {
+    double sum{0};
+    for (negativeIndex; negativeIndex + 1 < size; ++negativeIndex) { 
+        sum += array[negativeIndex];   
+    }
+
+    return sum;
 }
 
 
@@ -48,8 +93,18 @@ int main(){
 
         double maxAbsElement;
         int32_t maxAbsIndex = findMaxAbsIndex(array, size, maxAbsElement);
-        std::cout << "Максимальный по модулю элемент: " << maxAbsElement << ", его индекс: " << maxAbsIndex << std::endl;
+        std::cout << "Max abs element: " << maxAbsElement << ", its index: " << maxAbsIndex << std::endl;
 
+        int32_t balancingIndex = findBalancingIndex(array, size);
+        std::cout << "Element where is diff is the least: " << balancingIndex << std::endl;
+
+        if (int32_t negativeIndex = findNegative(array, size) == -1) {
+            std::cout << "There are no negatives in array" << std::endl;
+        }
+        else {
+            int32_t sumAfterNegative = findSumAfterNegative(array, size, negativeIndex);
+            std::cout << "Sum of elements after 1st negative: " << sumAfterNegative << std::endl;
+        } 
     }
     catch (std::invalid_argument &e){
         std::cout << e.what();
