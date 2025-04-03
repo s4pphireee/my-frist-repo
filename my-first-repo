@@ -192,10 +192,10 @@ int main(){
         compressArray(array, size, copy_array);
         compressArrayViaInterval(array, size, copy_array);
         std::cout << "Minimal element with max index: " << findMinAbsMaxIndex(array, size) << std::endl;
+        delete [] array;
     }
     catch (std::invalid_argument &e){
         std::cout << e.what();
     }
-    
     return 0;
 }
