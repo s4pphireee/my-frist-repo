@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <algorithm>
+#include <random>
 
 void InputSize(int32_t& size){
     
@@ -20,6 +21,43 @@ void fillArray(double* array, int32_t size){
     std::cout << "Input elements:" << std::endl;
     for (int32_t i{0}; i < size; ++i){
         std::cin >> array[i];
+    }
+}
+
+void fillArrayWithRandom(double* array, int32_t size, double lowerBound, double upperBound) {
+    std::random_device rd;              
+    std::mt19937 gen(rd());             
+    std::uniform_real_distribution<> dis(lowerBound, upperBound); 
+
+    for (int i = 0; i < size; ++i) {
+        array[i] = dis(gen);
+    }
+}
+
+void menu(double*& array, int size) {
+    int8_t choice;
+    std::cout << "Choose a method to fill:\n";
+    std::cout << "1. Manual\n";
+    std::cout << "2. Random\n"; 
+    std::cout << "Your choice: ";
+    std::cin >> choice;
+
+    switch (choice) {
+        case 1:
+            fillArray(array, size);
+            break;
+        case 2: {
+            double lowerBound;
+            double upperBound;
+            std::cout << "Enter a lower and upper bounds for rand: ";
+            std::cin >> lowerBound >> upperBound;
+            fillArrayWithRandom(array, size, lowerBound, upperBound);
+            break;
+        }
+        default:
+            std::cout << "Incorrect option.\n";
+            menu(array, size);
+            break;
     }
 }
 
