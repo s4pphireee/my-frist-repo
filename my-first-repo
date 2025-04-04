@@ -24,7 +24,7 @@ void fillArray(double* array, int32_t size){
     }
 }
 
-void fillArrayWithRandom(double* array, int32_t size, double lowerBound, double upperBound) {
+void fillArrayWithRandom(double*& array, int32_t size, double lowerBound, double upperBound) {
     std::random_device rd;              
     std::mt19937 gen(rd());             
     std::uniform_real_distribution<> dis(lowerBound, upperBound); 
