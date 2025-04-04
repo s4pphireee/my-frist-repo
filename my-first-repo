@@ -29,12 +29,12 @@ void fillArrayWithRandom(double*& array, int32_t size, double lowerBound, double
     std::mt19937 gen(rd());             
     std::uniform_real_distribution<> dis(lowerBound, upperBound); 
 
-    for (int i = 0; i < size; ++i) {
+    for (int32_t i = 0; i < size; ++i) {
         array[i] = dis(gen);
     }
 }
 
-void menu(double*& array, int size) {
+void menu(double*& array, int32_t size) {
     int8_t choice;
     std::cout << "Choose a method to fill:\n";
     std::cout << "1. Manual\n";
@@ -43,10 +43,10 @@ void menu(double*& array, int size) {
     std::cin >> choice;
 
     switch (choice) {
-        case 1:
+        case '1':
             fillArray(array, size);
             break;
-        case 2: {
+        case '2': {
             double lowerBound;
             double upperBound;
             std::cout << "Enter a lower and upper bounds for rand: ";
@@ -120,7 +120,7 @@ double findSumAfterNegative(double* array, int32_t size, int32_t negativeIndex) 
 void arrayOutput(double* array, int32_t size) {
     std::cout << "Compressed array: ";
     for (int32_t i = 0; i < size; ++i){
-        std::cout << array[i];
+        std::cout << array[i] << ", ";
     }
     std::cout << std::endl;
 }
@@ -185,7 +185,7 @@ void compressArrayViaInterval(double*& array, int32_t size, double*& copy_array)
 }
 
 
-int32_t findMinAbsMaxIndex(double* array, int32_t size) {
+double findMinAbsMaxIndex(double* array, int32_t size) {
     int32_t minIndex = 0;
     double minAbsValue = std::abs(array[0]);
 
@@ -194,12 +194,13 @@ int32_t findMinAbsMaxIndex(double* array, int32_t size) {
         if (currentAbsValue < minAbsValue) {
             minAbsValue = currentAbsValue;
             minIndex = i;
-        } else if (currentAbsValue == minAbsValue) {
+        } 
+        else if (currentAbsValue == minAbsValue) {
             minIndex = i; 
         }
     }
 
-    return minIndex;
+    return array[minIndex];
 }
 
 int main(){
@@ -210,14 +211,17 @@ int main(){
         
         InputSize(size);
         double* array = nullptr;
+
         createArray(array, size);
-        fillArray(array, size);
+        menu(array, size);
+        
         double maxAbsElement;
         int32_t maxAbsIndex = findMaxAbsIndex(array, size, maxAbsElement);
         std::cout << "Max abs element: " << maxAbsElement << ", its index: " << maxAbsIndex << std::endl;
         
         int32_t balancingIndex = findBalancingIndex(array, size);
         std::cout << "Index of an element where is diff is the less: " << balancingIndex << std::endl;
+        
         int32_t negativeIndex = findNegative(array, size);
         if (negativeIndex == -1) {
             std::cout << "There are no negatives in array" << std::endl;
@@ -226,10 +230,14 @@ int main(){
             double sumAfterNegative = findSumAfterNegative(array, size, negativeIndex);
             std::cout << "Sum of elements after 1st negative: " << sumAfterNegative << std::endl;
         }
+        
         double* copy_array = nullptr;
+        
         compressArray(array, size, copy_array);
         compressArrayViaInterval(array, size, copy_array);
+        
         std::cout << "Minimal element with max index: " << findMinAbsMaxIndex(array, size) << std::endl;
+        
         delete [] array;
     }
     catch (std::invalid_argument &e){
